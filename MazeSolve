@@ -1,0 +1,75 @@
+#include <iostream>
+#include "hlavicka.h"
+
+using namespace std;
+
+int main()
+{
+
+    int graph [9][9] = {{0,1,1,1,0,0,0,0,0},
+                        {1,0,1,0,0,0,0,0,0},
+                        {1,1,0,0,0,0,0,0,0},
+                        {1,0,0,0,1,1,0,0,0},
+                        {0,0,0,1,0,0,0,0,0},
+                        {0,0,0,1,0,0,1,1,0},
+                        {0,0,0,0,0,1,0,0,0},
+                        {0,0,0,0,0,1,0,0,1},
+                        {0,0,0,0,0,0,0,1,0}};
+
+    const int n = 9;
+    const int entrance = 0;
+    const int ex = 8;
+
+    Tstruct *pStack;
+    StackInit(&pStack);
+
+    bool path = false;
+    bool visited[n];
+    for (int i = 0; i<= n-1; i++)
+        visited[i] = false;
+
+    int v = entrance;
+    pStack = StackPush(pStack,entrance);
+    visited[v] = true;
+
+    while (v != ex && !StackIsEmpty(pStack)){ // dokud se nenašel konec a zasobnik neni prazdny
+        cout << "processing vertex: " << v << endl;
+
+        if (graph[v][ex]){ // je spojeny s koncem?
+            pStack = StackPush(pStack,ex);
+            v = ex;
+            visited[v] = true; // nasli jsme ho, konec
+        }
+        else{
+            path = false;
+            for (int j=0; j <= n-1; j++ ){
+                if (graph[v][j] && !visited[j]){ //najde prvniho nenavstiveneho souseda
+                    path = true;
+                    pStack = StackPush(pStack,j);
+                    v = j; // jdem na prvek souseda
+                    visited[v] = true;
+                    break;
+                }
+            }
+            if (!path)
+                v = StackPop(&pStack);
+            if (!StackIsEmpty(pStack))
+                v = StackShow(pStack);
+            else break;
+        }
+    }
+// display the way out
+    cout << "Way out from the maze: ";
+    if (!StackIsEmpty(pStack))
+//proceed while the stack is not empty
+        while (!StackIsEmpty(pStack))
+        {
+// pop vertex from the top of stack
+            v = StackPop(&pStack);
+            cout << v << " ";
+        }
+    else cout << "does not exist.";
+
+    return 0;
+}
+
