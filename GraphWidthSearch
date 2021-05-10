@@ -1,0 +1,32 @@
+#include <iostream>
+#include "hlavicka.h"
+
+using namespace std;
+
+int main(){
+    int graph [5][5] = {{0,1,1,0,1}, {1,0,1,0,1}, {1,1,0,1,0},{0,0,1,0,1}, {1,1,0,1,0}};
+    int v;
+    const int n = 5; // počet prvků
+
+    Tstruct *pHead, *pTail; // deklarace
+    QueueInit(&pHead, &pTail); // inicializace
+
+    bool visited[n];
+    for (int i = 0; i<= n-1; i++)
+        visited[i] = false;
+
+    pTail = Enqueue(&pHead, pTail, 0); // přidej startovací prvek do fronty
+    visited[0] = true; // označ ho jako navštívený
+
+    while (!QueueIsEmpty(pHead)){ // dokud není fronta prázdná tak..
+        v = Dequeue(&pHead, &pTail); // vem prvek z vrchu
+        cout << "processing vertex: " << v << endl;
+        for (int j=0; j <= n-1; j++ ){
+            if (graph[v][j] && !visited[j]){ //pokud je soused a není navštívený, tak..
+                pTail = Enqueue(&pHead, pTail, j); // ho dáme do fronty
+                visited[j] = true; // a označíme jako navštívený
+            }
+        }
+    }
+    return 0;
+}
