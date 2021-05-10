@@ -1,0 +1,79 @@
+#include <iostream>
+#include "hlavicka.h"
+
+using namespace std;
+
+int main()
+{
+    //graph definition
+    int graph [5][5] = {
+        {0,1,1,0,0}, //1
+        {1,0,0,0,0}, //2
+        {1,0,0,0,0}, //3
+        {0,0,0,0,0}, //4
+        {0,0,0,0,0}  //5
+    };
+// constant - number of vertexes
+    const int n = 5;
+    int v;
+// variable all carries an information if all vertexes
+// were visited
+    bool all = false;
+// number of components
+    int comp = 0;
+// counter
+    int counter;
+// stack declaration
+    Tstruct *pStack;
+// stack initialization
+    StackInit(&pStack);
+// array of vertexes - keeps information to which
+// component vertex belongs
+    int component[n];
+// initialization of array
+    for (int i = 0; i<= n-1; i++) component[i] = 0;
+// cycle proceeds while all vertex have not been visited
+    while (!all)
+    {
+// increment number of components
+        comp++;
+//find first unvisited vertex
+        for (counter=0; counter <= n-1; counter++)
+            if (component[counter] == 0) break;
+// push first unvisited vertex into the stack
+        pStack = StackPush(pStack,counter);
+//and mark it as a component of number comp
+        component[counter] = comp;
+// while the stack is not empty or all vertexes
+// are not marked as visited proceed
+        while (!StackIsEmpty(pStack) && !all)
+        {
+// pop vertex from the top of stack
+            v = StackPop(&pStack);
+            cout << "Processing vertex: " << v << endl;
+// push all unvisited neighbors into the stack
+            for (int j=0; j <= n-1; j++ )
+                if (graph[v][j] && !component[j])
+                {
+                    pStack = StackPush(pStack,j);
+//and mark them as a component of
+// number comp
+                    component[j] = comp;
+                }
+// are all vertexes marked as visited?
+            all = true;
+            for (int j=0; j <= n-1; j++)
+                if (!component[j]) all = false;
+        }
+    }
+    cout << "The graph has " << comp << " component." << endl;
+// display vertexes of each component
+    for (int i = 1; i <= comp; i++)
+    {
+        cout << "Vertexes of " << i <<". component: ";
+        for (int j = 0; j <= n - 1; j ++)
+            if (component[j] == i) cout <<j << ", ";
+        cout << endl;
+    }
+    return 0;
+}
