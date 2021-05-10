@@ -1,0 +1,16 @@
+#include <iostream>
+using namespace std;
+
+struct Tstruct {
+    int i; float f;
+     };
+
+int main() {
+    Tstruct *pStruct;
+    pStruct = new(Tstruct);
+    //ke clenum struktury muzeme pristupovat dvemi zpusoby:
+    (*pStruct).i = 10;
+    pStruct->f = 10.5;
+    cout << pStruct->i << ", " << (*pStruct).f << endl;
+    return 0;
+    }
