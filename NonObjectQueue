@@ -1,0 +1,110 @@
+#include <iostream>
+
+using namespace std;
+
+// Type declarations
+/* Tstruct - general structure type int value - value carried by the structure Tstruct * next - following element */
+struct Tstruct {
+    int value;
+    Tstruct * next;
+    };
+
+// Functions declarations
+/* QueueInit - initializes Queue in: Tstruct* *HEAD - the head of Queue Tstruct* *TAIL - the tail of Queue out: void */
+void QueueInit (Tstruct* *HEAD, Tstruct* *TAIL) {
+    *HEAD = NULL;
+    *TAIL = NULL;
+    };
+
+/* Enqueue - enqueues a new value into the Queue in: Tstruct* *HEAD - the adress of address ot head of queue Tstruct * TAIL - the address of tail of queue int VALUE - input value out: Tstruct * - pointer to the new tail of queue */
+Tstruct* Enqueue(Tstruct* *HEAD, Tstruct *TAIL, int VALUE) {
+    // create new structure
+    Tstruct *l_hlp = new (std::nothrow) Tstruct;
+    // if the l_hlp is null, then there is no enough memory –  the aplication must be stopped
+    if (l_hlp == nullptr) {
+        throw std::runtime_error( "Out of memory" );
+        return NULL;
+        }
+        // store the value
+        l_hlp->value = VALUE;
+        // next points to the NULL
+        l_hlp->next = NULL;
+        // next of recent TAIL points to the new element
+        if (TAIL) TAIL->next = l_hlp;
+        // if the queue is empty, new element is also the HEAD
+        if (*HEAD == NULL) *HEAD = l_hlp;
+        // return pointer to new tail
+        return l_hlp;
+};
+
+int Dequeue(Tstruct* *HEAD, Tstruct* *TAIL) {
+    if (*HEAD == NULL) {
+        throw std::runtime_error( "Queue is empty" );
+        return 0;
+        }
+    // helping variables
+    int l_val; Tstruct *l_hlp;
+    // store pointer to the HEAD
+    l_hlp = *HEAD;
+    // store value from the HEAD
+    l_val = l_hlp->value;      //zde je ve skriptech chyba l_val = HEAD->value;
+    // element following the HEAD becomes the HEAD
+    *HEAD = l_hlp->next;
+    // if the last element was dequeued, TAIL must be NULL
+    if (*HEAD == NULL) *TAIL = NULL;
+    // delete old head
+    delete l_hlp; // return value
+    return l_val;
+    };
+
+int QueueShow (Tstruct *HEAD) {
+    if (HEAD) {
+        return HEAD->value;
+    }
+    else {
+        throw std::runtime_error( "Queue is empty" );
+        return 0;
+        }
+    };
+
+/* QueueIsEmpty - returns true/false if the queue is/is not empty in: Tstruct *HEAD - the address of head of queue out: bool - true/false */
+bool QueueIsEmpty (Tstruct *HEAD) {
+    if (HEAD) return false;
+    else return true;
+    };
+
+/* QueueConcat - appends second queue to the first one in: Tstruct* *HEAD1 - the address of address of head of first queue Tstruct* *TAIL1 - the address of address of tail of first queue Tstruct* *HEAD2 - the address of address of head of second queue Tstruct* *TAIL2 - the address of address of tail of second queue out: int - value stored at the head of queue */
+void QueueConcat (Tstruct* *HEAD1, Tstruct* *TAIL1, Tstruct* *HEAD2, Tstruct* *TAIL2) {
+    //second queue is empty, nothing to append
+    if (*HEAD2 == NULL) return;
+    if (*HEAD1 == NULL) {
+        //first queue is empty, return head of second queue
+        *HEAD1 = *HEAD2; }
+    else {
+        // neither one queue is empty
+        // helping variable holds address of tail of first queue
+        Tstruct * l_hlp = *TAIL1;
+        // last element of first tail points to first element of second queue
+        l_hlp->next = *HEAD2;
+        }
+    // tail of concatenated queues is tail of second queue
+    *TAIL1 = *TAIL2;
+    // head and tail of second queue must point to NULL
+    *HEAD2 = NULL;
+    *TAIL2 = NULL;
+    return;
+    };
+
+
+
+int main() {
+    // queue declaration
+    Tstruct *pHead, *pTail;
+    // queue initialization
+    QueueInit(&pHead, &pTail);
+    // fill the queue with some values
+    for(int i = 4; i<= 9; i++) pTail = Enqueue(&pHead, pTail, i);
+    cout << QueueShow(pHead) << endl;
+    while (!QueueIsEmpty(pHead)) cout << Dequeue(&pHead, &pTail) << ", ";
+    return 0;
+    }
