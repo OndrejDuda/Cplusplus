@@ -1,0 +1,46 @@
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
+using namespace std;
+
+
+
+void quickswap(int array[], int left, int right){ // to je funkce pro prohození prvků
+    int tmp = array[right];
+    array[right] = array[left];
+    array[left] = tmp;
+}
+
+void quicksort(int array[], int left, int right){ // zadám od kterého prvku (left) do kterého (right) chci pole (array[]) seřadit
+     if(left < right){
+        int pivot = left; // pivot se označí jako prvek nejvíce nalevo v poli
+        for(int i = left + 1; i < right; i++){
+            if(array[i] > array[left]){
+                quickswap(array, i, ++pivot); // pokud je prvek napravo větší jako pivot, prohodím ho s prvkem před pivotem
+            }
+        }
+        quickswap(array, left, pivot); // prohodím nejkrajnější prvek s pivotem
+        quicksort(array, left, pivot); // zavolám rekurzivně quicksort a seřazuji skupinu prvků nalevo od pivota
+        quicksort(array, pivot + 1, right); // zavolám rekurzivně quicksort a seřazuji skupinu prvků napravo od pivota
+     }
+}
+
+int main()
+{
+    int i, pole [5];
+    cout << "Spousti se quick sort." << endl;
+
+    for(i=0;i<5;i++){
+        pole[i]=rand()%100+1;
+        cout << i+1 << ". " << pole[i] << endl;
+    }
+
+    quicksort(pole, 0, 5);
+    cout << endl << endl << endl;
+
+    for(i=0;i<5;i++){
+        cout << i+1 << ". " << pole[i] << endl;
+    }
+    return 0;
+}
