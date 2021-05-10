@@ -1,0 +1,26 @@
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    // handling the exception
+    try {
+        while (true) {
+            new int[100000000ul];
+            }
+        }
+    catch (const std::bad_alloc& e) {
+        cout << e.what() << '\n';
+        }
+
+    // nothrow constant
+    while (true) {
+        int* pInt = new(std::nothrow) int[100000000ul]; //diky konstante nothrow neskonci program chybou v pripade
+        if (pInt == nullptr) {
+            cout << pInt;
+            cout << "Allocation returned nullptr\n";
+            break;
+            }
+        }
+
+    }
