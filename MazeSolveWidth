@@ -1,0 +1,112 @@
+#include <iostream>
+#include "hlavicka.h"
+
+using namespace std;
+
+int main()
+{
+    //graph definition
+    int graph [9][9] = {{0,1,1,1,0,0,0,0,0},
+        {1,0,1,0,0,0,0,0,0},
+        {1,1,0,0,0,0,0,0,0},
+        {1,0,0,0,1,1,0,0,0},
+        {0,0,0,1,0,0,0,0,0},
+        {0,0,0,1,0,0,1,1,0},
+        {0,0,0,0,0,1,0,0,0},
+        {0,0,0,0,0,1,0,0,1},
+        {0,0,0,0,0,0,0,1,0}
+    };
+// constant - number of vertexes
+    const int n = 9;
+// constant - entrance to the maze
+    const int entrance = 1;
+// constant - exit from the maze
+    const int ex = 8;
+// actual distance
+    int dst;
+// existence of some path
+    bool path = false;
+// queue declaration
+    Tstruct *pHead, *pTail;
+// queue initialization
+    QueueInit(&pHead, &pTail);
+// array of distances - declaration and initialization
+    int distances[n];
+    for (int i = 0; i<= n-1; i++) distances[i] = -1;
+// proceeded vertex
+    int v = entrance;
+// enqueue root node into the queue
+    pTail = Enqueue(&pHead, pTail, v);
+//mark root node as visited
+    distances[v] = 0;
+//proceed while the queue is not empty
+    while (!QueueIsEmpty(pHead))
+    {
+// dequeue vertex from the begining of queue
+        v = Dequeue(&pHead, &pTail);
+        cout << "proceeding vertex: " << v << endl;
+// find the distance from begining
+        dst = distances[v] + 1;
+// find all unvisited neighbors of v
+        for (int j=0; j <= n-1; j++ )
+        {
+            if (graph[v][j] && distances[j] == -1)
+            {
+// enqueue all unvisited neighbors into
+// the queue
+                pTail = Enqueue(&pHead, pTail, j);
+// store distance from the begining
+                distances[j] = dst;
+// is the exit vertex proceeded?
+                if (j == ex)
+                {
+                    path = true;
+// leave the cycle
+                    break;
+                }
+            }
+        }
+// was the path found? if so, leave the cycle
+        if (path) break;
+    }
+// emty the queue
+    Dequeue (&pHead, &pTail);
+// display the way out
+    cout << "Way out from the maze (from exit to entrance): ";
+// reconstruct the path if exist
+    if (path)
+    {
+// enqueue exit vertex
+        v = ex;
+        pTail = Enqueue(&pHead, pTail, v);
+        while (v != entrance)
+        {
+// find distance from v to the entrance and
+// decrement it
+            dst = distances[v] -1;
+// find neighboring vertex with distance dst from
+//the entrance
+            for (int j=0; j <= n-1; j++ )
+                if (graph[v][j] && distances[j] == dst)
+                {
+// enqueue found vertex and leave the
+// cycle
+                    pTail = Enqueue(&pHead, pTail, j);
+//new proceeded vertex is vertex number j
+                    v = j;
+                    break;
+                }
+        }
+// path is in the queue, dysplay it
+        while (!QueueIsEmpty(pHead))
+        {
+            v = Dequeue(&pHead, &pTail);
+            if (pHead) cout << v << ", ";
+            else cout << v << ".";
+        }
+    }
+    else cout << "does not exist.";
+    cout << endl;
+
+    return 0;
+}
