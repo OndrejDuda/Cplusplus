@@ -1,0 +1,103 @@
+#include <iostream>
+
+using namespace std;
+
+class Queue {
+    //structure for queue
+    struct Tstruct {
+        int value;
+        Tstruct * next;
+        };
+
+    // pointer to the head and tail of queue
+    Tstruct * HEAD, * TAIL;
+    //public methods
+    public:
+        // constructor - initializes the queue – sets the HEAD and TAIL to NULL
+        Queue() {
+            HEAD = NULL;
+            TAIL = NULL;
+            }
+        // Enqueue - Enqueues new value to the tail of queue
+
+        void Enqueue(int VALUE) {
+            // helping pointer
+            Tstruct * l_hlp;
+            // try to allocate the memory
+            try {
+                l_hlp = new Tstruct;
+                }
+            catch (const std::bad_alloc& e) {
+                throw std::runtime_error(e.what());
+                }
+            //store value
+            l_hlp->value = VALUE;
+            //last element points to NULL
+            l_hlp->next = NULL;
+            // next of recent TAIL points to the new element
+            if (TAIL) TAIL->next = l_hlp;
+            // new member becomes new TAIL
+            TAIL = l_hlp;
+            // if the queue is empty, new element is also the HEAD
+            if (HEAD == NULL) HEAD = l_hlp;
+            };
+
+    // Dequeue - Dequeues element from the head of queue
+    int Dequeue() {
+        if (HEAD == NULL) {
+            throw std::runtime_error( "Queue is empty" );
+            return 0;
+            }
+        // helping variables
+        int l_val;
+        Tstruct *l_hlp;
+        // store pointer to the HEAD
+        l_hlp = HEAD;
+        //store value from the HEAD
+        l_val = HEAD->value;
+        // element following the HEAD becomes the HEAD
+        HEAD = l_hlp->next;
+        // if the last element was dequeued, TAIL must //be NULL
+        if (HEAD == NULL) TAIL = NULL;
+        delete l_hlp;
+        return l_val;
+        };
+
+    // Show - returns value from the head of queue without dequeueing it
+    int Show () {
+        if (HEAD) {
+            return HEAD->value;
+        } else {
+            throw std::runtime_error( "Queue is empty" );
+            return 0;
+            }
+        };
+
+    //IsEmpty - returns true/false if the queue is/is not empty
+    bool IsEmpty () {
+        return !bool(HEAD);
+        };
+
+    //Empty - empties the queue
+    void Empty() {
+        while (!IsEmpty()) Dequeue();
+        };
+
+    // destructor - destroys whole structure
+    ~Queue() {
+        Empty();
+        delete(HEAD);
+        delete(TAIL);
+        };
+    };
+
+int main()
+{
+    // create new object
+    Queue queue;
+    // fill the queue with some values
+    for(int i = 3; i<= 8; i++) queue.Enqueue(i);
+    cout << queue.Show() << endl;
+    while (!queue.IsEmpty()) cout << queue.Dequeue() << ", ";
+    return 0;
+}
